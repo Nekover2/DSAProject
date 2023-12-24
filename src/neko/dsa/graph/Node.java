@@ -1,92 +1,39 @@
 package neko.dsa.graph;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
-    int id; // id of this node
-    boolean type; // true: city, false: crossroad
-    int x, y; // coordinates
+    private final String id;
+    private final List<Edge> neighbors;
 
-    double cost;
-
-    List<Node> neighbors; // neighbors of this node, that mean the roads that connect to this node
-
-    public Node(int id, boolean type, int x, int y) {
+    Node(String id) {
         this.id = id;
-        this.type = type;
-        this.x = x;
-        this.y = y;
+        this.neighbors = new ArrayList<>();
     }
 
-    public Node(int id, boolean type, int x, int y, List<Node> neighbors) {
+    Node(String id, List<Edge> neighbors) {
         this.id = id;
-        this.type = type;
-        this.x = x;
-        this.y = y;
         this.neighbors = neighbors;
     }
 
-    public void addNeighbor(Node neighbor) {
-        this.neighbors.add(neighbor);
+    public String getId() {
+        return id;
     }
 
-    public void addNeighbors(List<Node> neighbors) {
-        this.neighbors.addAll(neighbors);
+    public List<Edge> getNeighbors() {
+        return neighbors;
     }
 
-    public void removeNeighbor(Node neighbor) {
-        this.neighbors.remove(neighbor);
+    public void addNeighbor(Node target, double distance) {
+        neighbors.add(new Edge(target, distance));
     }
 
-    public void removeNeighbors(List<Node> neighbors) {
-        this.neighbors.removeAll(neighbors);
+    public void removeNeighbor(Node target) {
+        neighbors.removeIf(edge -> edge.target == target);
     }
 
-    public void clearNeighbors() {
-        this.neighbors.clear();
-    }
-
-    public List<Node> getNeighbors() {
-        return this.neighbors;
-    }
-
-    public boolean isCity() {
-        return this.type;
-    }
-
-    public boolean isCrossroad() {
-        return !this.type;
-    }
-
-    public int getX() {
-        return this.x;
-    }
-
-    public int getY() {
-        return this.y;
-    }
-
-    public void setCity() {
-        this.type = true;
-    }
-
-    public void setCrossroad() {
-        this.type = false;
-    }
-
-    public double getDistance(Node node) {
-        return Math.sqrt(Math.pow(this.x - node.x, 2) + Math.pow(this.y - node.y, 2));
-    }
-
-    public static double getDistance(Node node1, Node node2) {
-        return Math.sqrt(Math.pow(node1.x - node2.x, 2) + Math.pow(node1.y - node2.y, 2));
-    }
-
-    public double getCost() {
-        return this.cost;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
+    public void removeNeighbor(String targetId) {
+        neighbors.removeIf(edge -> edge.target.getId().equals(targetId));
     }
 }
