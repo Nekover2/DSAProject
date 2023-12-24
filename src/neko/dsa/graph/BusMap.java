@@ -15,6 +15,7 @@ public class BusMap {
     List<ExtendedNode> getAllRequiredNodes1 = new ArrayList<>();
     private Node startNode;
 
+    List<Node> ShortestPath = new ArrayList<>();
     List<List<Double>> distanceMatrix = new ArrayList<>();
     List<List<List<String>>> pathMatrix = new ArrayList<>();
 
@@ -114,7 +115,31 @@ public class BusMap {
         }
 
         System.out.println("Shortest Path: " + shortestPath);
+        for (String s : shortestPath) {
+            ShortestPath.add(Node.getNodeById(map, s));
+        }
         return shortestPath;
+    }
+
+    public double getDistance(Node startNode, Node endNode) {
+        boolean flag = false;
+        double distance = 0;
+        for(int i =0; i < ShortestPath.size() -1; i++){
+            if(ShortestPath.get(i) == startNode) {
+                flag = true;
+            }
+
+            if(flag) {
+                for(Edge edge : ShortestPath.get(i).getNeighbors()) {
+                    if(edge.target == ShortestPath.get(i + 1)) {
+                        distance += edge.distance;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return distance;
     }
     public static void main(String[] args) {
         List<Node> graph = new ArrayList<>();
@@ -165,6 +190,7 @@ public class BusMap {
 
 //        List<ExtendedNode> optimal1 = busMap.getOptimal();
         busMap.getShortestPath();
+        System.out.println(busMap.getDistance(nodeA, nodeC));
 //        for(ExtendedNode node : optimal1) {
 //            System.out.println(node.getId());
 //        }
