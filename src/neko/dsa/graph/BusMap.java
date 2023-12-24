@@ -3,6 +3,7 @@ package neko.dsa.graph;
 import java.util.ArrayList;
 //import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class BusMap {
 
@@ -13,6 +14,9 @@ public class BusMap {
     private List<ExtendedNode> allRequiredNodes = new ArrayList<>();
     List<ExtendedNode> getAllRequiredNodes1 = new ArrayList<>();
     private Node startNode;
+
+    List<List<Double>> distanceMatrix = new ArrayList<>();
+    List<List<List<String>>> pathMatrix = new ArrayList<>();
 
     public BusMap(List<Node> map, List<Node> requiredNodes) {
         this.map = map;
@@ -41,18 +45,16 @@ public class BusMap {
     }
 
     public void dijkstraAllRequiredNodes() {
-        List<ExtendedNode> allRequiredNodes1 = new ArrayList<>();
-        this.getAllRequiredNodes1 = allRequiredNodes1;
+        this.getAllRequiredNodes1 = new ArrayList<>();
         //addRequiredNode(startNode);
-        for(Node node : requiredNodes) {
-            ExtendedNode extendedNode = new ExtendedNode(node.getId());
-
-            allRequiredNodes1.add(extendedNode);
-        }
         for(Node startNode : requiredNodes) {
-            List<ExtendedEdge> extendedEdges = new ArrayList<>();
+
+            List<Double> tmp = new ArrayList<>();
+            List<List<String>> tmp1 = new ArrayList<>();
             for (Node endNode : requiredNodes) {
                 if(startNode == endNode) {
+                    tmp.add(0.0);
+                    tmp1.add(new ArrayList<>());
                     continue;
                 }
                 List<String> shortPath = DijkstraAlgorithm.findShortestPath(map, startNode.getId(), endNode.getId());
@@ -60,29 +62,60 @@ public class BusMap {
 //                if(shortDistance == Double.POSITIVE_INFINITY || shortDistance == 0) {
 //                    continue;
 //                }
-                extendedEdges.add(new ExtendedEdge(ExtendedNode.getNodeById(allRequiredNodes1, endNode.getId()), shortDistance, shortPath));
-            }
 
-            allRequiredNodes.add(new ExtendedNode(startNode.getId(), extendedEdges));
+                tmp.add(shortDistance);
+                tmp1.add(shortPath);
+            }
+            distanceMatrix.add(tmp);
+            pathMatrix.add(tmp1);
+
         }
     }
 
     public List<ExtendedNode> getOptimal() {
         ExtendedGraph extendedGraph = new ExtendedGraph();
-        for(ExtendedNode node : allRequiredNodes) {
-            ExtendedNode tmpNode = new ExtendedNode(node.getId());
-            extendedGraph.addNode(tmpNode);
-
-            for (ExtendedEdge edge : node.getNeighbors()) {
-                tmpNode.addNeighbor(edge.getTarget(), edge.getDistance(), edge.path);
-            }
-
-            tmpNode.addNeighbor(getAllRequiredNodes1.get(0), Double.POSITIVE_INFINITY, new ArrayList<>());
+        for (Node requiredNode : requiredNodes) {
+            ExtendedNode extendedNode = new ExtendedNode(requiredNode.getId());
+            extendedGraph.addNode(extendedNode);
         }
-//        extendedGraph.addNodes(allRequiredNodes);
-        return TwoOptAlgorithm.ShortestPathFinder.findOptimalPath(allRequiredNodes.get(0), extendedGraph);
+
+        for(int i = 0; i < requiredNodes.size(); i++) {
+            ExtendedNode extendedNode = extendedGraph.nodes.get(i);
+            for(int j = 0; j < requiredNodes.size(); j++) {
+                if(i == j) {
+                    continue;
+                }
+                ExtendedNode extendedNode1 = extendedGraph.nodes.get(j);
+                extendedNode.addNeighbor(extendedNode1, distanceMatrix.get(i).get(j), pathMatrix.get(i).get(j));
+            }
+        }
+
+        return TwoOptAlgorithm.ShortestPathFinder.findOptimalPath(extendedGraph.nodes.get(0), extendedGraph);
     }
 
+
+    public List<String> getShortestPath() {
+        this.dijkstraAllRequiredNodes();
+        List<ExtendedNode> optimal = this.getOptimal();
+        List<String> shortestPath = new ArrayList<>();
+        shortestPath.add(optimal.get(0).getId());
+        for(int i = 0; i < optimal.size() - 1; i++) {
+            ExtendedNode currentNode = optimal.get(i);
+            ExtendedNode nextNode = optimal.get(i + 1);
+
+            for(ExtendedEdge edge : currentNode.getNeighbors()) {
+
+                if(edge.getTarget() == nextNode) {
+                    shortestPath.remove(shortestPath.size() - 1);
+                    shortestPath.addAll(edge.getPath());
+                    break;
+                }
+            }
+        }
+
+        System.out.println("Shortest Path: " + shortestPath);
+        return shortestPath;
+    }
     public static void main(String[] args) {
         List<Node> graph = new ArrayList<>();
 
@@ -128,62 +161,12 @@ public class BusMap {
         }
 
 
-        List<ExtendedNode> optimalPath = busMap.getOptimal();
 
 
-        ExtendedGraph graph1 = new ExtendedGraph();
-
-        ExtendedNode node1 = new ExtendedNode("A");
-        ExtendedNode node2 = new ExtendedNode("B");
-        ExtendedNode node3 = new ExtendedNode("C");
-        ExtendedNode node4 = new ExtendedNode("D");
-
-
-        graph1.addNode(node1);
-        graph1.addNode(node2);
-        graph1.addNode(node3);
-        graph1.addNode(node4);
-
-//        node1.addNeighbor(node2, 10);
-//        node1.addNeighbor(node3, 11);
-      node1.addNeighbor(node4, 13);
-
-
-        node1.addNeighbor(busMap.getAllRequiredNodes1.get(1), busMap.allRequiredNodes.get(0).getNeighbors().get(0).distance, busMap.allRequiredNodes.get(0).getNeighbors().get(0).path);
-        node1.addNeighbor(busMap.allRequiredNodes.get(0).getNeighbors().get(1).target, busMap.allRequiredNodes.get(0).getNeighbors().get(1).distance, busMap.allRequiredNodes.get(0).getNeighbors().get(1).path);
-        node1.addNeighbor(busMap.allRequiredNodes.get(0).getNeighbors().get(2).target, busMap.allRequiredNodes.get(0).getNeighbors().get(2).distance, busMap.allRequiredNodes.get(0).getNeighbors().get(2).path);
-        System.out.println("node1:");
-        for (ExtendedEdge edge : node1.getNeighbors()) {
-            System.out.println(edge.getDistance() + " " + edge.getTarget().getId());
-        }
-
-        node2.addNeighbor(node1, 5);
-        node2.addNeighbor(node3, 1);
-        node2.addNeighbor(node4, 3);
-//
-        node3.addNeighbor(node1, 4);
-        node3.addNeighbor(node2, 14);
-        node3.addNeighbor(node4, 2);
-//
-        node4.addNeighbor(node1, 2);
-        node4.addNeighbor(node2, 12);
-        node4.addNeighbor(node3, 13);
-
-        // Find the optimal path
-        List<ExtendedNode> optimalPath1 = TwoOptAlgorithm.ShortestPathFinder.findOptimalPath(node1, graph1);
-
-        System.out.println("extendedGraph");
-        for(ExtendedNode node : graph1.getNodes()) {
-            for (ExtendedEdge edge : node.getNeighbors()) {
-                System.out.println(edge.getDistance() + " " + edge.getTarget().getId());
-            }
-            System.out.println("-----");
-        }
-
-        // Print the optimal path
-        System.out.println("Optimal Path:");
-        for (ExtendedNode node : optimalPath) {
-            System.out.println(node.getId());
-        }
+//        List<ExtendedNode> optimal1 = busMap.getOptimal();
+        busMap.getShortestPath();
+//        for(ExtendedNode node : optimal1) {
+//            System.out.println(node.getId());
+//        }
     }
 }
