@@ -4,7 +4,7 @@ import java.util.*;
 
 public class DijkstraAlgorithm {
 
-    private static List<String> findShortestPath(List<Node> graph, String startNodeId, String endNodeId) {
+    public static List<String> findShortestPath(List<Node> graph, String startNodeId, String endNodeId) {
         // Initialize distances and previous nodes
         Map<String, Integer> distances = new HashMap<>();
         Map<String, Node> previousNodes = new HashMap<>();
@@ -61,6 +61,19 @@ public class DijkstraAlgorithm {
         return shortestPath;
     }
 
+    public static double getShortestDistance(List<Node> nodes, List<String> shortestPath) {
+        double shortestDistance = 0;
+
+        for (int i = 0; i < shortestPath.size() - 1; i++) {
+            Node currentNode = Node.getNodeById(nodes,shortestPath.get(i));
+            Node nextNode = Node.getNodeById(nodes, shortestPath.get(i + 1));
+            assert currentNode != null;
+            double distance = currentNode.getDistanceTo(nextNode);
+            shortestDistance += distance;
+        }
+
+        return shortestDistance == 0 ? Double.POSITIVE_INFINITY : shortestDistance;
+    }
     private static Node getNodeById(List<Node> graph, String id) {
         for (Node node : graph) {
             if (node.getId().equals(id)) {

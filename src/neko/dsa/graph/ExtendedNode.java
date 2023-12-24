@@ -3,16 +3,16 @@ package neko.dsa.graph;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node {
+public class ExtendedNode {
     private final String id;
-    private final List<Edge> neighbors;
+    private final List<ExtendedEdge> neighbors;
 
-    Node(String id) {
+    ExtendedNode(String id) {
         this.id = id;
         this.neighbors = new ArrayList<>();
     }
 
-    Node(String id, List<Edge> neighbors) {
+    ExtendedNode(String id, List<ExtendedEdge> neighbors) {
         this.id = id;
         this.neighbors = neighbors;
     }
@@ -21,15 +21,12 @@ public class Node {
         return id;
     }
 
-    public List<Edge> getNeighbors() {
+    public List<ExtendedEdge> getNeighbors() {
         return neighbors;
     }
 
-    public void addNeighbor(Node target, double distance) {
-        neighbors.add(new Edge(target, distance));
-    }
 
-    public void removeNeighbor(Node target) {
+    public void removeNeighbor(ExtendedNode target) {
         neighbors.removeIf(edge -> edge.target == target);
     }
 
@@ -37,8 +34,8 @@ public class Node {
         neighbors.removeIf(edge -> edge.target.getId().equals(targetId));
     }
 
-    public double getDistanceTo(Node target) {
-        for (Edge edge : neighbors) {
+    public double getDistanceTo(ExtendedNode target) {
+        for (ExtendedEdge edge : neighbors) {
             if (edge.target == target) {
                 return edge.distance;
             }
@@ -46,8 +43,16 @@ public class Node {
         return Double.POSITIVE_INFINITY;
     }
 
-    static Node getNodeById(List<Node> nodes, String id) {
-        for (Node node : nodes) {
+    public void addNeighbor(ExtendedNode target, double distance) {
+        neighbors.add(new ExtendedEdge(target, distance));
+    }
+
+    public void addNeighbor(ExtendedNode target, double distance, List<String> path) {
+        neighbors.add(new ExtendedEdge(target, distance, path));
+    }
+
+    static ExtendedNode getNodeById(List<ExtendedNode> nodes, String id) {
+        for (ExtendedNode node : nodes) {
             if (node.getId().equals(id)) {
                 return node;
             }
