@@ -1,25 +1,39 @@
 package BusSystem;
 
+import neko.dsa.graph.DijkstraAlgorithm;
 import neko.dsa.graph.Node;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Passenger implements Comparable<Passenger> {
     private String id;
     private boolean pregnantStatus;
     private int age;
-    private Node Location;
-    private Node destination;
+    private String Location;
+    private String destination;
     private long timeRegistered;
     private int priority;
+    private DijkstraAlgorithm findShortestPath;
 
     public void setPriority(int priority) {
         this.priority = priority;
     }
 
     public int getPriority() {
+        if (age >= 65) {
+            priority += 15;
+        }
+        if (age >= 50) {
+            priority += 10;
+        }
+        if (isPregnantStatus()) {
+            priority += 20;
+        }
         return priority;
     }
 
-    public Passenger(String id, boolean pregnantStatus, int age, Node location, Node destination, long timeRegistered) {
+    public Passenger(String id, boolean pregnantStatus, int age, String location, String destination, long timeRegistered) {
         this.id = id;
         this.pregnantStatus = pregnantStatus;
         this.age = age;
@@ -40,11 +54,11 @@ public class Passenger implements Comparable<Passenger> {
         this.age = age;
     }
 
-    public void setLocation(Node location) {
+    public void setLocation(String location) {
         Location = location;
     }
 
-    public void setDestination(Node destination) {
+    public void setDestination(String destination) {
         this.destination = destination;
     }
 
@@ -64,11 +78,11 @@ public class Passenger implements Comparable<Passenger> {
         return age;
     }
 
-    public Node getLocation() {
+    public String getLocation() {
         return Location;
     }
 
-    public Node getDestination() {
+    public String getDestination() {
         return destination;
     }
 
@@ -78,11 +92,13 @@ public class Passenger implements Comparable<Passenger> {
 
 
     @Override
-    public int compareTo(Passenger o) {
-        return 0;
+    public int compareTo(Passenger other) {
+        return Integer.compare(this.getPriority(), other.getPriority());
     }
     // LẤY TỪ BÀI CHUNG.
-    public Node[] getPath() {
-
+    public List<String> getPath(DijkstraAlgorithm dijkstra, List<Node> graph, String location, String destination) {
+         List<String> path = new ArrayList<String>();
+         path = dijkstra.findShortestPath(graph, location, destination);
+         return path;
     }
 }
