@@ -67,7 +67,8 @@ public class Bus {
         seatList[indexOfSeatList] = priorityQueue.insert(passenger);
     }
 
-    public void moveToTheFirstPassenger(Passenger passenger) {
+    public void moveToTheFirstPassenger(List<Node> graph, Passenger passenger) {
+        dijkstraAlgorithm.findShortestPath(graph, this.currentNode, passenger.getDestination());
     }
 
     // MỖI PASSENGER CÓ MỘT PATH RIÊNG, VỚI PASSENGER A THÌ PATH NÀY LÀ KHOẢNG CÁCH TỪ CHỖ A ĐỨNG
@@ -115,7 +116,7 @@ public class Bus {
 //        }
 //    }
     public void move(List<Passenger> passengerList, List<Node> graph) {
-        moveToTheFirstPassenger(passengerList.get(0));
+        moveToTheFirstPassenger(graph, passengerList.get(0));
         String startLocation = this.currentNode;
 
         for (int i = 0; i < passengerList.size(); i++) {
@@ -133,7 +134,7 @@ public class Bus {
 
             if (i < passengerList.size() - 1) {
                 Passenger nextPassenger = passengerList.get(i + 1);
-                List<String> anotherPath = moveBetweenNonPath(dijkstraAlgorithm, graph, this.currentNode, nextPassenger.getLocation());
+                List<String> anotherPath = moveBetweenNonPath(graph, this.currentNode, nextPassenger.getLocation());
 
                 // Logic for moving between non-path nodes
                 for (String node : anotherPath) {
@@ -147,8 +148,8 @@ public class Bus {
     }
 
 
-    public List<String> moveBetweenNonPath(DijkstraAlgorithm dijkstra, List<Node> graph, String location, String destination) {
-        return dijkstra.findShortestPath(graph, location, destination);
+    public List<String> moveBetweenNonPath(List<Node> graph, String location, String destination) {
+        return dijkstraAlgorithm.findShortestPath(graph, location, destination);
     }
 
     public void addPassengers(List<Passenger> passengers) {
@@ -157,6 +158,9 @@ public class Bus {
         }
     }
 
+    public static void main(String[] args) {
+        Bus mainBus = new Bus(new Node("A").getId());
+    }
 
 //    public List<Node> moveBetweenNonPath(Node start, Node end) {
 //

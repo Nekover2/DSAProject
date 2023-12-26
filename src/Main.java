@@ -1,6 +1,7 @@
 import neko.dsa.graph.*;
+import neko.dsa.bus.*;
 import java.util.*;
-import BusSystem.*;
+
 
 import java.io.*;
 public class Main {
@@ -13,33 +14,26 @@ public class Main {
 //            }
 //        }
 
-        List<Node> map = initMap("src/Map.ini");
-        //Bus mainBus = initBus(map.get(0));
+        Bus mainBus = new Bus("A", new ArrayList<>(), initMap("src/Map.ini"), 5);
+
 
         //Add List of passengers
         List<Passenger> passengers = new ArrayList<>();
-        passengers.add(new Passenger("001", false, 20, "A", "B", System.currentTimeMillis()));
-        passengers.add(new Passenger("002", false, 20, "A", "B", System.currentTimeMillis()));
-        passengers.add(new Passenger("003", false, 20, "A", "Z", System.currentTimeMillis()));
-        passengers.add(new Passenger("004", false, 20, "C", "Z", System.currentTimeMillis()));
 
+        passengers.add(new Passenger(true, 20, "A", "B", 0));
+        passengers.add(new Passenger(false, 10, "A", "C", 1));
+        passengers.add(new Passenger(false, 90, "A", "Z", 5));
+        passengers.add(new Passenger(false, 50, "B", "C", 2));
+        passengers.add(new Passenger(false, 50, "B", "Z", 3));
+        passengers.add(new Passenger(false, 50, "C", "Z", 4));
+        passengers.add(new Passenger(false, 50, "C", "Z", 6));
         //Add passengers to bus
+        for (Passenger passenger : passengers) {
+            mainBus.addPassenger(passenger);
+        }
 
-//        for (Passenger passenger : passengers) {
-//            mainBus.pickUpPassenger(passenger);
-//        }
-
-        List<Node> requiredNodes = new ArrayList<>();
-        requiredNodes.add(Node.getNodeById(map, "A"));
-        requiredNodes.add(Node.getNodeById(map, "B"));
-        requiredNodes.add(Node.getNodeById(map, "Z"));
-
-        BusMap busMap = new BusMap(map, requiredNodes);
-
-        // init BusMap to calculate the shortest path
-//        BusMap busMap = new BusMap(map, convertStringToNode(getAllPassengersPlace(mainBus), map));
-        System.out.println(busMap.getShortestPath());
-        //Mỗi lần add hành khách thì sẽ có thêm điểm đón và trả vào trong requiredNodes
+        //Print out the optimal path
+        System.out.println(mainBus.getOptimalPath());
     }
 
 
@@ -72,35 +66,13 @@ public class Main {
         return result;
     }
 
-    /**
-     * Init the bus
-     */
-    static Bus initBus(Node startNode) {
-        return new Bus(startNode.getId());
-    }
-
-    /**
-     * Get all passengers' current place and destination
-     * @return List of passengers' current place and destination
-     */
-    static List<String> getAllPassengersPlace(Bus bus) {
-        Passenger[] passengers = bus.getPassengers();
-
-        List<String> result = new ArrayList<>();
-
-        for (Passenger passenger : passengers) {
-            result.add(passenger.getLocation());
-            result.add(passenger.getDestination());
-        }
-
-        return result;
-    }
-
     static List<Node> convertStringToNode(List<String> list, List<Node> map) {
         List<Node> result = new ArrayList<>();
         for(String node : list) {
             result.add(Node.getNodeById(map, node));
         }
         return result;
+
+
     }
 }

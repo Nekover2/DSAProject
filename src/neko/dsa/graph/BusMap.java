@@ -25,6 +25,12 @@ public class BusMap {
         allRequiredNodes = new ArrayList<>();
     }
 
+    public BusMap(List<Node> map) {
+        this.map = map;
+        this.requiredNodes = new ArrayList<>();
+        allRequiredNodes = new ArrayList<>();
+    }
+
     public List<Node> getMap() {
         return map;
     }
@@ -42,10 +48,21 @@ public class BusMap {
     }
 
     public void addRequiredNode(Node node) {
+        for (Node requiredNode : this.requiredNodes) {
+            if (requiredNode.getId().equals(node.getId())) {
+                return;
+            }
+        }
         requiredNodes.add(node);
     }
     public void addRequiredNodes(List<String> nodes) {
         for(String node : nodes) {
+            //check if node is in requiredNodes
+            for (Node requiredNode : this.requiredNodes) {
+                if (requiredNode.getId().equals(node)) {
+                    continue;
+                }
+            }
             requiredNodes.add(Node.getNodeById(map, node));
         }
     }
@@ -112,6 +129,7 @@ public class BusMap {
             for(ExtendedEdge edge : currentNode.getNeighbors()) {
 
                 if(edge.getTarget() == nextNode) {
+                    if (edge.getPath().isEmpty()) throw new RuntimeException("No path found?");
                     shortestPath.remove(shortestPath.size() - 1);
                     shortestPath.addAll(edge.getPath());
                     break;
@@ -119,7 +137,6 @@ public class BusMap {
             }
         }
 
-        System.out.println("Shortest Path: " + shortestPath);
         for (String s : shortestPath) {
             ShortestPath.add(Node.getNodeById(map, s));
         }
