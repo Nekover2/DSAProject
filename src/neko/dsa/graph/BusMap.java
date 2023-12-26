@@ -44,6 +44,11 @@ public class BusMap {
     public void addRequiredNode(Node node) {
         requiredNodes.add(node);
     }
+    public void addRequiredNodes(List<String> nodes) {
+        for(String node : nodes) {
+            requiredNodes.add(Node.getNodeById(map, node));
+        }
+    }
 
     public void dijkstraAllRequiredNodes() {
         this.getAllRequiredNodes1 = new ArrayList<>();

@@ -3,21 +3,24 @@ package BusSystem;
 import neko.dsa.graph.DijkstraAlgorithm;
 import neko.dsa.graph.Node;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class bus {
+public class Bus {
     private Passenger[] seatList;
     private String currentNode;
     int indexOfSeatList = 0;
     private OrderedArrayMaxPQ<Passenger> priorityQueue;
     private DijkstraAlgorithm dijkstraAlgorithm;
 
-    public bus(String currentNode) {
+    public Bus(String currentNode) {
         this.dijkstraAlgorithm = new DijkstraAlgorithm();
         this.priorityQueue = new OrderedArrayMaxPQ<>(16);
         seatList = priorityQueue.getPq();
         this.currentNode = currentNode;
+    }
+
+    public Passenger[] getPassengers() {
+        return seatList;
     }
 
     private void printPickupNotification(String passengerId) {
@@ -130,6 +133,11 @@ public class bus {
         return dijkstra.findShortestPath(graph, location, destination);
     }
 
+    public void addPassengers(List<Passenger> passengers) {
+        for (Passenger passenger : passengers) {
+            this.addPassenger(passenger, this.priorityQueue);
+        }
+    }
 
 
 //    public List<Node> moveBetweenNonPath(Node start, Node end) {

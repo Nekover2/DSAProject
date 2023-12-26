@@ -46,7 +46,7 @@ public class Node {
         return Double.POSITIVE_INFINITY;
     }
 
-    static Node getNodeById(List<Node> nodes, String id) {
+    public static Node getNodeById(List<Node> nodes, String id) {
         for (Node node : nodes) {
             if (node.getId().equals(id)) {
                 return node;
