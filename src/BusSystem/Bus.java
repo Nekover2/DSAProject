@@ -1,13 +1,16 @@
 package BusSystem;
 
+import neko.dsa.graph.BusMap;
 import neko.dsa.graph.DijkstraAlgorithm;
 import neko.dsa.graph.Node;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Bus {
     private Passenger[] seatList;
     private String currentNode;
+    BusMap busMap;
     int indexOfSeatList = 0;
     private OrderedArrayMaxPQ<Passenger> priorityQueue;
     private DijkstraAlgorithm dijkstraAlgorithm;
@@ -17,6 +20,16 @@ public class Bus {
         this.priorityQueue = new OrderedArrayMaxPQ<>(16);
         seatList = priorityQueue.getPq();
         this.currentNode = currentNode;
+    }
+
+    public Bus(List<Node> map, int maxCapacity, String currentNode) {
+        this.dijkstraAlgorithm = new DijkstraAlgorithm();
+        this.priorityQueue = new OrderedArrayMaxPQ<>(maxCapacity);
+        seatList = priorityQueue.getPq();
+        this.busMap = new BusMap(map, new ArrayList<>());
+        this.busMap.addRequiredNode(Node.getNodeById(map, currentNode));
+        this.currentNode = currentNode;
+        this.busMap = new BusMap(map, null);
     }
 
     public Passenger[] getPassengers() {
@@ -44,12 +57,17 @@ public class Bus {
 
 
     public void addPassenger(Passenger passenger, OrderedArrayMaxPQ<Passenger> priorityQueue) {
-
+        busMap.addRequiredNode(Node.getNodeById(busMap.getMap(), passenger.getDestination()));
+        busMap.addRequiredNode(Node.getNodeById(busMap.getMap(), passenger.getLocation()));
+        try {
+            busMap.getOptimal();
+        } catch (Exception e) {
+            System.out.println("Cannot find the optimal path");
+        }
         seatList[indexOfSeatList] = priorityQueue.insert(passenger);
     }
 
     public void moveToTheFirstPassenger(Passenger passenger) {
-
     }
 
     // MỖI PASSENGER CÓ MỘT PATH RIÊNG, VỚI PASSENGER A THÌ PATH NÀY LÀ KHOẢNG CÁCH TỪ CHỖ A ĐỨNG
