@@ -9,22 +9,23 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        // Creating 20 nodes for the map
-        List<Node> mapNodes = createNodes();
+//        // Creating 20 nodes for the map
+//        List<Node> mapNodes = createNodes();
+//
+//        // Creating a bus with an initial node position
+//        bus busSystem = new bus("A");
+//
+//        // Creating 16 passengers with different characteristics and destinations
+//        List<Passenger> passengerList = createPassengers();
+//
+//        // Simulating the movement of the bus based on the passenger list and the map
+//        busSystem.move(passengerList, mapNodes);
+//
+//        // Displaying the final position or status of the bus or any other relevant information
+//        // ...
+//
+//        // You can add more functionality to display or manage the bus, passengers, or any other aspects of the system
 
-        // Creating a bus with an initial node position
-        bus busSystem = new bus("A");
-
-        // Creating 16 passengers with different characteristics and destinations
-        List<Passenger> passengerList = createPassengers();
-
-        // Simulating the movement of the bus based on the passenger list and the map
-        busSystem.move(passengerList, mapNodes);
-
-        // Displaying the final position or status of the bus or any other relevant information
-        // ...
-
-        // You can add more functionality to display or manage the bus, passengers, or any other aspects of the system
     }
 
     private static List<Node> createNodes() {
