@@ -7,7 +7,7 @@ public class Node {
     private final String id;
     private final List<Edge> neighbors;
 
-    Node(String id) {
+    public Node(String id) {
         this.id = id;
         this.neighbors = new ArrayList<>();
     }
