@@ -14,7 +14,7 @@ public class Main {
 //        }
 
         List<Node> map = initMap("src/Map.ini");
-        Bus mainBus = initBus(map.get(0));
+        //Bus mainBus = initBus(map.get(0));
 
         //Add List of passengers
         List<Passenger> passengers = new ArrayList<>();
@@ -25,16 +25,20 @@ public class Main {
 
         //Add passengers to bus
 
-        for (Passenger passenger : passengers) {
-            mainBus.pickUpPassenger(passenger);
-        }
+//        for (Passenger passenger : passengers) {
+//            mainBus.pickUpPassenger(passenger);
+//        }
+
+        List<Node> requiredNodes = new ArrayList<>();
+        requiredNodes.add(Node.getNodeById(map, "A"));
+        requiredNodes.add(Node.getNodeById(map, "B"));
+        requiredNodes.add(Node.getNodeById(map, "Z"));
+
+        BusMap busMap = new BusMap(map, requiredNodes);
 
         // init BusMap to calculate the shortest path
-        BusMap busMap = new BusMap(map, convertStringToNode(getAllPassengersPlace(mainBus), map));
-        List<ExtendedNode> path = busMap.getOptimal();
-        for (ExtendedNode node : path) {
-            System.out.println(node.getId());
-        }
+//        BusMap busMap = new BusMap(map, convertStringToNode(getAllPassengersPlace(mainBus), map));
+        System.out.println(busMap.getShortestPath());
         //Mỗi lần add hành khách thì sẽ có thêm điểm đón và trả vào trong requiredNodes
     }
 
