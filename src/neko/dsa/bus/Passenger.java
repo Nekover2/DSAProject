@@ -11,7 +11,7 @@ public class Passenger implements Comparable<Passenger>{
 
     long timeRegistered;
 
-    int priority;
+    int priority = 0;
     public Passenger(boolean isPregnant, int age, String pickupLocation, String destination, long timeRegistered) {
         this.id = String.valueOf(idCounter++);
         this.isPregnant = isPregnant;

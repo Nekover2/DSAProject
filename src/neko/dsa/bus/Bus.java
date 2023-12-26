@@ -32,6 +32,10 @@ public class Bus {
         priorityQueue.addAll(passengerList);
     }
 
+    /**
+     * Add a passenger to the bus, if the bus is full, replace the passenger with the lowest priority
+     * @param passenger the passenger to be added
+     */
     public void addPassenger(Passenger passenger) {
         if (currentCapacity < maxCapacity) {
             priorityQueue.add(passenger);
@@ -44,14 +48,26 @@ public class Bus {
         }
     }
 
+    /**
+     * Remove a passenger from the bus
+     * @return the passenger to be removed
+     */
     public Passenger removePassenger() {
         return priorityQueue.poll();
     }
 
+    /**
+     * Get the current accepted passengers
+     * @return the current accepted passengers
+     */
     public List<Passenger> getCurrentAcceptedPassengers() {
         return List.copyOf(priorityQueue);
     }
 
+    /**
+     * Get the optimal path for the bus
+     * @return the optimal path for the bus
+     */
     public List<String> getOptimalPath() {
         for(Passenger passenger : priorityQueue) {
             busMap.addRequiredNode(Node.getNodeById(busMap.getMap(),passenger.getDestination()));
@@ -64,14 +80,40 @@ public class Bus {
         return busMap.getShortestPath();
     }
 
+    /**
+     * Check if the passenger is acceptable by the bus
+     * @param passenger the passenger to be checked
+     * @return true if the passenger is acceptable by the bus
+     */
+    public boolean isAcceptable(Passenger passenger) {
+        return this.priorityQueue.contains(passenger);
+    }
+
+    /**
+     * Get the travel path of the passenger
+     * @param passenger the passenger to be checked
+     * @return The travel path of the passenger
+     */
     public List<String> getPassengerPath(Passenger passenger) {
+        if (!isAcceptable(passenger)) {
+            throw new IllegalArgumentException("Passenger is not in the bus");
+        }
         List<String> path = busMap.getShortestPath();
         int index = path.indexOf(passenger.getPickupLocation());
         int endIndex = path.indexOf(passenger.getDestination());
         return path.subList(index,endIndex);
     }
 
+    /**
+     * Get the estimated wait time for the passenger
+     * @param passenger the passenger to be checked
+     * @return the estimated wait time for the passenger
+     */
     public double getEstimatedWaitTime(Passenger passenger) {
+        //check if passenger is in the bus
+        if (!isAcceptable(passenger)) {
+            throw new IllegalArgumentException("Passenger is not in the bus");
+        }
         return busMap.getDistance(busMap.getRequiredNodes().get(0), Node.getNodeById(busMap.getMap(), passenger.getDestination())) / 60;
     }
 }
